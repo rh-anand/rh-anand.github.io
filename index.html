@@ -26,6 +26,53 @@
     nav button:hover {
       background-color: #005fa3;
     }
+    /* Download button styling */
+    .download-btn {
+      color: #007acc;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 300px;
+      text-align: center;
+      border-radius: 5px;
+    }
+    .modal-buttons {
+      margin-top: 20px;
+    }
+    .modal-buttons button {
+      padding: 8px 16px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .ok-btn {
+      background-color: #007acc;
+      color: white;
+    }
+    .cancel-btn {
+      background-color: #800080;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -47,7 +94,7 @@
   <!-- Resume Section (Initially hidden) -->
   <section id="resume" style="display: none;">
     <h2>Resume</h2>
-    <p>Below is my resume:</p>
+    <p>Below is my resume: <button class="download-btn" onclick="showDownloadModal()">Download</button></p>
     <embed src="Resume - Rohan Anand.pdf" type="application/pdf" width="100%" height="600px" />
   </section>
   
@@ -61,6 +108,17 @@
       <li><a href="https://twitter.com/yourusername" target="_blank">Twitter</a></li>
     </ul>
   </section>
+
+  <!-- Download Confirmation Modal -->
+  <div id="downloadModal" class="modal">
+    <div class="modal-content">
+      <p>Confirm Download?</p>
+      <div class="modal-buttons">
+        <button class="ok-btn" onclick="downloadResume()">Ok</button>
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
   
   <script>
     function showSection(sectionId) {
@@ -71,6 +129,25 @@
       
       // Show the selected section
       document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function showDownloadModal() {
+      document.getElementById('downloadModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('downloadModal').style.display = 'none';
+    }
+
+    function downloadResume() {
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = 'Resume - Rohan Anand.pdf';
+      link.download = 'Resume - Rohan Anand.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      closeModal();
     }
   </script>
 </body>
