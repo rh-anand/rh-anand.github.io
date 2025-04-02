@@ -8,33 +8,70 @@
     body { font-family: Arial, sans-serif; margin: 2em; }
     h1 { color: #333; }
     section { margin-bottom: 2em; }
-    nav a { margin-right: 1em; text-decoration: none; color: #007acc; }
-    nav a:hover { text-decoration: underline; }
+    /* Navigation styling for top right */
+    nav {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+    nav button {
+      margin-left: 10px;
+      padding: 8px 16px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    nav button:hover {
+      background-color: #005fa3;
+    }
   </style>
 </head>
 <body>
   <h1>Hello, World!</h1>
-  <!-- Navigation for quick access -->
+  
+  <!-- Navigation Buttons -->
   <nav>
-    <a href="#about">About Me</a>
-    <a href="#resume">Resume</a>
+    <button onclick="showSection('about')">About Me</button>
+    <button onclick="showSection('resume')">Resume</button>
+    <button onclick="showSection('links')">Links</button>
   </nav>
   
-  <!-- About Me Section -->
+  <!-- About Me Section (Default visible) -->
   <section id="about">
     <h2>About Me</h2>
-    <p>This is the About Me section. Here, you can introduce yourself, describe your background, interests, and more.</p>
+    <p>This is the About Me section. Welcome to my homepage where I share my background, interests, and more about myself.</p>
   </section>
   
-  <!-- Resume Section -->
-  <section id="resume">
+  <!-- Resume Section (Initially hidden) -->
+  <section id="resume" style="display: none;">
     <h2>Resume</h2>
     <p>Below is my resume:</p>
-    <!-- Embed the PDF file -->
-    <embed src="Resume - Rohan Anand.pdf" type="application/pdf" width="100%" height="600px" />
-    <!-- Alternatively, you can use an iframe:
-    <iframe src="path-to-resume.pdf" width="100%" height="600px" style="border: none;"></iframe>
-    -->
+    <embed src="resume.pdf" type="application/pdf" width="100%" height="600px" />
   </section>
+  
+  <!-- Links Section (Initially hidden) -->
+  <section id="links" style="display: none;">
+    <h2>Links</h2>
+    <p>Here are some useful links:</p>
+    <ul>
+      <li><a href="https://github.com/yourusername" target="_blank">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/yourusername" target="_blank">LinkedIn</a></li>
+      <li><a href="https://twitter.com/yourusername" target="_blank">Twitter</a></li>
+    </ul>
+  </section>
+  
+  <script>
+    function showSection(sectionId) {
+      // Hide all sections
+      document.getElementById('about').style.display = 'none';
+      document.getElementById('resume').style.display = 'none';
+      document.getElementById('links').style.display = 'none';
+      
+      // Show the selected section
+      document.getElementById(sectionId).style.display = 'block';
+    }
+  </script>
 </body>
 </html>
