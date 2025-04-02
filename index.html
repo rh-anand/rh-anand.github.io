@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to My GitHub Page</title>
+  <title>Rohan Anand</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 2em; }
     h1 { color: #333; }
@@ -33,7 +33,56 @@
       border: none;
       cursor: pointer;
       font-size: 16px;
-      margin-left: 10px;
+    }
+    .resume-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    /* Resume content styling */
+    .resume-content {
+      margin-top: 20px;
+    }
+    .resume-section {
+      margin-bottom: 30px;
+    }
+    .resume-section h3 {
+      color: #333;
+      border-bottom: 2px solid #007acc;
+      padding-bottom: 5px;
+    }
+    .resume-item {
+      margin-bottom: 15px;
+    }
+    .resume-item h4 {
+      margin: 0;
+      color: #444;
+    }
+    .resume-item .date {
+      color: #666;
+      font-style: italic;
+    }
+    .resume-item .location {
+      color: #666;
+    }
+    .resume-item ul {
+      margin-top: 5px;
+      padding-left: 20px;
+    }
+    .resume-item li {
+      margin-bottom: 5px;
+    }
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .skill-category {
+      background-color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 4px;
+      margin-right: 10px;
     }
     /* Modal styling */
     .modal {
@@ -76,7 +125,7 @@
   </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
+  <h1>Rohan Anand</h1>
   
   <!-- Navigation Buttons -->
   <nav>
@@ -94,7 +143,106 @@
   <!-- Resume Section (Initially hidden) -->
   <section id="resume" style="display: none;">
     <h2>Resume</h2>
-    <p>Below is my resume: <button class="download-btn" onclick="showDownloadModal()">Download</button></p>
+    <div class="resume-content">
+      <div class="resume-section">
+        <h3>Summary</h3>
+        <p>Data Science student and intern at Boston University with hands-on experience in data analysis, software development, and visualization. Skilled in Python, SQL, and modern data tools, with a strong foundation in research and project-based learning.</p>
+      </div>
+
+      <div class="resume-section">
+        <h3>Experience</h3>
+        <div class="resume-item">
+          <h4>Data Services Intern - C2 Data Technology</h4>
+          <div class="date">May 2024 - Aug 2024</div>
+          <div class="location">Boston, MA</div>
+          <ul>
+            <li>Generated realistic personal information to train ML models</li>
+            <li>Implemented flexible data generation to identify model performance gaps</li>
+            <li>Processed JSON database structures to automatically label columns</li>
+            <li>Validated OpenSearch functionality in ML model comparisons</li>
+          </ul>
+        </div>
+
+        <div class="resume-item">
+          <h4>Data Analyst Intern - AS Insurance Agency</h4>
+          <div class="date">Jun 2022 - Aug 2022</div>
+          <div class="location">Manchester, NH</div>
+          <ul>
+            <li>Merged large datasets using Pandas</li>
+            <li>Constructed SQL queries on Snowflake for data grouping</li>
+            <li>Developed 10-15 Tableau dashboards for customer renewals</li>
+            <li>Maintained a client retention rate of over 95%</li>
+          </ul>
+        </div>
+
+        <div class="resume-item">
+          <h4>DS Undergraduate Tutor - Boston University</h4>
+          <div class="date">Mar 2023 - Dec 2024</div>
+          <div class="location">Boston, MA</div>
+          <ul>
+            <li>Tutored 10-15 students per week in Multivariable Calculus, Applied Statistics, and Data Science</li>
+            <li>Supported courses in advanced mathematics and data science</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <h3>Education</h3>
+        <div class="resume-item">
+          <h4>Boston University</h4>
+          <div class="date">Sep 2022 - May 2025</div>
+          <div>B.S. in Data Science</div>
+          <ul>
+            <li>Dean's List (2022 - 2025)</li>
+            <li>Mentor in BU DS Mentorship Program</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <h3>Skills</h3>
+        <div class="skills-list">
+          <div class="skill-category">
+            <strong>Programming Languages:</strong> Python, R, SQL, Rust
+          </div>
+          <div class="skill-category">
+            <strong>Tools & Technologies:</strong> Azure, Tableau, Snowflake, MySQL, Git, PowerBI, VS Code, Excel, Word, PowerPoint
+          </div>
+          <div class="skill-category">
+            <strong>Data Science:</strong> pandas, NumPy, Matplotlib, seaborn, scikit-learn, TensorFlow, MySQLConnector
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <h3>Projects</h3>
+        <div class="resume-item">
+          <h4>Police Misconduct Data Analysis for NLG</h4>
+          <div class="date">Oct 2024 - Dec 2024</div>
+          <ul>
+            <li>Developed a RAG LLM system for objective punitive recommendations</li>
+            <li>Visualized AI versus actual disciplinary actions</li>
+            <li>Created interactive maps of Boston police districts</li>
+          </ul>
+        </div>
+
+        <div class="resume-item">
+          <h4>Analyzing Boston's 311 Service Requests</h4>
+          <div class="date">Sep 2023 - Dec 2023</div>
+          <ul>
+            <li>Built a database of 2.7M+ service requests</li>
+            <li>Created interactive graphs using ipywidgets</li>
+            <li>Developed a PowerBI map highlighting social vulnerability</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 40px;">PDF Resume</h2>
+    <div class="resume-header">
+      <p>Below is my resume: </p>
+      <button class="download-btn" onclick="showDownloadModal()">Download</button>
+    </div>
     <embed src="Resume - Rohan Anand.pdf" type="application/pdf" width="100%" height="600px" />
   </section>
   
