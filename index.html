@@ -148,6 +148,19 @@
       background-color: #800080;
       color: white;
     }
+    /* Blog link button styling */
+    .blog-link-btn {
+      color: #007acc;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .blog-link-btn:hover {
+      color: #005fa3;
+    }
   </style>
 </head>
 <body>
@@ -312,7 +325,7 @@
   <!-- Blog Section (Initially hidden) -->
   <section id="blog" style="display: none;">
     <h2>Blog</h2>
-    <p>Coming soon...</p>
+    <p>Read my thoughts <button class="blog-link-btn" onclick="window.open('https://rh-anand.bearblog.dev', '_blank')">here</button></p>
   </section>
   
   <!-- Links Section (Initially hidden) -->
@@ -323,6 +336,7 @@
       <li><a href="https://github.com/rh-anand" target="_blank">GitHub</a></li>
       <li><a href="https://linkedin.com/in/rohan-h-anand" target="_blank">LinkedIn</a></li>
       <li><a href="https://x.com/anandhrohan" target="_blank">Twitter (X)</a></li>
+      <li><a href="https://rh-anand.bearblog.dev" target="_blank">Blog</a></li>
     </ul>
   </section>
 
