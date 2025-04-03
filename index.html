@@ -84,6 +84,26 @@
       border-radius: 4px;
       margin-right: 10px;
     }
+    /* Divider styling */
+    .section-divider {
+      height: 2px;
+      background-color: #007acc;
+      margin: 40px 0;
+      width: 100%;
+    }
+    /* PDF Below button styling */
+    .pdf-below-btn {
+      color: #007acc;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 10px;
+    }
+    .pdf-below-btn:hover {
+      text-decoration: underline;
+    }
     /* Modal styling */
     .modal {
       display: none;
@@ -131,6 +151,8 @@
   <nav>
     <button onclick="showSection('about')">About Me</button>
     <button onclick="showSection('resume')">Resume</button>
+    <button onclick="showSection('data-visuals')">Data Visuals</button>
+    <button onclick="showSection('blog')">Blog</button>
     <button onclick="showSection('links')">Links</button>
   </nav>
   
@@ -144,7 +166,7 @@
   <section id="resume" style="display: none;">
     <div class="resume-header">
       <h2>Resume</h2>
-      <span style="color: #666; font-size: 16px;">(PDF Below)</span>
+      <button class="pdf-below-btn" onclick="scrollToPDF()">(PDF Below)</button>
     </div>
     <div class="resume-content">
       <div class="resume-section">
@@ -265,7 +287,9 @@
       </div>
     </div>
 
-    <h2 style="margin-top: 40px;">PDF Resume</h2>
+    <div class="section-divider"></div>
+
+    <h2 id="pdf-section">PDF Resume</h2>
     <div class="resume-header">
       <p>Below is my resume: </p>
       <button class="download-btn" onclick="showDownloadModal()">Download</button>
@@ -273,13 +297,25 @@
     <embed src="Resume - Rohan Anand.pdf" type="application/pdf" width="100%" height="600px" />
   </section>
   
+  <!-- Data Visuals Section (Initially hidden) -->
+  <section id="data-visuals" style="display: none;">
+    <h2>Data Visuals</h2>
+    <p>Coming soon...</p>
+  </section>
+
+  <!-- Blog Section (Initially hidden) -->
+  <section id="blog" style="display: none;">
+    <h2>Blog</h2>
+    <p>Coming soon...</p>
+  </section>
+  
   <!-- Links Section (Initially hidden) -->
   <section id="links" style="display: none;">
     <h2>Links</h2>
     <p>Here are some useful links:</p>
     <ul>
-      <li><a href="https://github.com/yourusername" target="_blank">GitHub</a></li>
-      <li><a href="https://www.linkedin.com/in/yourusername" target="_blank">LinkedIn</a></li>
+      <li><a href="https://github.com/rh-anand" target="_blank">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/rohan-h-anand" target="_blank">LinkedIn</a></li>
       <li><a href="https://twitter.com/yourusername" target="_blank">Twitter</a></li>
     </ul>
   </section>
@@ -300,10 +336,16 @@
       // Hide all sections
       document.getElementById('about').style.display = 'none';
       document.getElementById('resume').style.display = 'none';
+      document.getElementById('data-visuals').style.display = 'none';
+      document.getElementById('blog').style.display = 'none';
       document.getElementById('links').style.display = 'none';
       
       // Show the selected section
       document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function scrollToPDF() {
+      document.getElementById('pdf-section').scrollIntoView({ behavior: 'smooth' });
     }
 
     function showDownloadModal() {
