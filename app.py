@@ -10,6 +10,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 import json
+import random
 
 # Load state boundary data
 with open('us-states.json', 'r') as f:
@@ -109,10 +110,6 @@ def create_state_map(nearest_teams=None, league="NFL"):
         dragging=False
     )
     
-    # Create a grid of polygons covering the US
-    grid_size = 0.5  # Smaller grid size for smoother coloring
-    grid_polygons = []
-    
     # Create a single polygon representing the entire US
     us_polygon = []
     for feature in state_boundaries['features']:
@@ -140,47 +137,61 @@ def create_state_map(nearest_teams=None, league="NFL"):
             p1x, p1y = p2x, p2y
         return inside
     
-    # Create grid polygons
-    for lat in range(25, 50, 1):
-        for lon in range(-125, -65, 1):
-            # Create a small square polygon
-            polygon = [
-                [lat, lon],
-                [lat, lon + grid_size],
-                [lat + grid_size, lon + grid_size],
-                [lat + grid_size, lon],
-                [lat, lon]
-            ]
-            
-            # Check if the center of the polygon is in the US
-            center = (lat + grid_size/2, lon + grid_size/2)
-            if point_in_us(center):
-                grid_polygons.append(polygon)
+    def hex_to_rgb(hex_color):
+        # Convert hex color to RGB
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
     
-    # For each grid polygon, find the nearest team and color it
-    for polygon in grid_polygons:
-        # Find the center of the polygon
-        center_lat = (polygon[0][0] + polygon[2][0]) / 2
-        center_lon = (polygon[0][1] + polygon[2][1]) / 2
-        center = (center_lat, center_lon)
+    def rgb_to_hex(rgb):
+        # Convert RGB to hex color
+        return '#{:02x}{:02x}{:02x}'.format(*rgb)
+    
+    def mix_colors(colors):
+        # Mix multiple colors by averaging their RGB values
+        if not colors:
+            return '#808080'  # Default gray if no colors
         
-        # Find nearest team
-        nearest_team = None
-        min_distance = float('inf')
-        for team, team_info in nfl_teams.items():
-            distance = geodesic(center, team_info['coords']).miles
-            if distance < min_distance:
-                min_distance = distance
-                nearest_team = team
+        rgb_colors = [hex_to_rgb(color) for color in colors]
+        mixed_rgb = tuple(sum(c) // len(colors) for c in zip(*rgb_colors))
+        return rgb_to_hex(mixed_rgb)
+    
+    # Generate random points and color them
+    num_points = 10000  # Number of random points to generate
+    for _ in range(num_points):
+        # Generate random point within US bounds
+        lat = random.uniform(25, 50)
+        lon = random.uniform(-125, -65)
+        point = (lat, lon)
         
-        if nearest_team:
-            team_info = nfl_teams[nearest_team]
-            # Create a colored polygon
-            folium.Polygon(
-                locations=polygon,
-                color=team_info['color'],
+        if point_in_us(point):
+            # Find all teams within a small distance threshold
+            teams_with_distances = []
+            for team, team_info in nfl_teams.items():
+                distance = geodesic(point, team_info['coords']).miles
+                teams_with_distances.append((team, distance))
+            
+            # Sort by distance
+            teams_with_distances.sort(key=lambda x: x[1])
+            
+            # Get the closest distance
+            min_distance = teams_with_distances[0][1]
+            
+            # Find all teams at the minimum distance (including ties)
+            closest_teams = [team for team, dist in teams_with_distances if abs(dist - min_distance) < 1.0]
+            
+            # Get colors of closest teams
+            team_colors = [nfl_teams[team]['color'] for team in closest_teams]
+            
+            # Mix colors if there are ties
+            point_color = mix_colors(team_colors)
+            
+            # Create a small circle at this point
+            folium.Circle(
+                location=point,
+                radius=1000,  # 1km radius
+                color=point_color,
                 fill=True,
-                fill_color=team_info['color'],
+                fill_color=point_color,
                 fill_opacity=0.7,
                 weight=0
             ).add_to(m)
