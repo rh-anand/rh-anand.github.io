@@ -365,6 +365,12 @@
   </div>
   
   <script>
+    // Function to save current section to session storage
+    function saveCurrentSection(sectionId) {
+      sessionStorage.setItem('currentSection', sectionId);
+    }
+
+    // Function to show section and save it
     function showSection(sectionId) {
       // Hide all sections
       document.getElementById('about').style.display = 'none';
@@ -375,7 +381,24 @@
       
       // Show the selected section
       document.getElementById(sectionId).style.display = 'block';
+      
+      // Save the current section
+      saveCurrentSection(sectionId);
     }
+
+    // Function to restore the last viewed section on page load
+    function restoreLastSection() {
+      const lastSection = sessionStorage.getItem('currentSection');
+      if (lastSection) {
+        showSection(lastSection);
+      } else {
+        // Default to 'about' section if no section was previously selected
+        showSection('about');
+      }
+    }
+
+    // Call restoreLastSection when the page loads
+    window.onload = restoreLastSection;
 
     function scrollToPDF() {
       document.getElementById('pdf-section').scrollIntoView({ behavior: 'smooth' });
