@@ -109,23 +109,9 @@ def create_state_map(nearest_teams=None, league="NFL"):
         dragging=False
     )
     
-    # First, add state boundaries with bold lines
-    for feature in state_boundaries['features']:
-        folium.GeoJson(
-            feature,
-            style_function=lambda x: {
-                'fillColor': 'transparent',
-                'color': 'black',
-                'weight': 3,  # Bold state boundaries
-                'fillOpacity': 0
-            }
-        ).add_to(m)
-    
-    # Create a grid of points across the US
-    grid_points = []
-    for lat in range(25, 50, 1):  # Approximate US latitude range
-        for lon in range(-125, -65, 1):  # Approximate US longitude range
-            grid_points.append((lat, lon))
+    # Create a grid of polygons covering the US
+    grid_size = 0.5  # Smaller grid size for smoother coloring
+    grid_polygons = []
     
     # Create a single polygon representing the entire US
     us_polygon = []
@@ -154,30 +140,72 @@ def create_state_map(nearest_teams=None, league="NFL"):
             p1x, p1y = p2x, p2y
         return inside
     
-    # For each grid point, find the nearest team
-    for point in grid_points:
-        if point_in_us(point):
-            nearest_team = None
-            min_distance = float('inf')
+    # Create grid polygons
+    for lat in range(25, 50, 1):
+        for lon in range(-125, -65, 1):
+            # Create a small square polygon
+            polygon = [
+                [lat, lon],
+                [lat, lon + grid_size],
+                [lat + grid_size, lon + grid_size],
+                [lat + grid_size, lon],
+                [lat, lon]
+            ]
             
-            for team, team_info in nfl_teams.items():
-                distance = geodesic(point, team_info['coords']).miles
-                if distance < min_distance:
-                    min_distance = distance
-                    nearest_team = team
-            
-            if nearest_team:
-                team_info = nfl_teams[nearest_team]
-                # Create a small circle at this point with the team's color
-                folium.Circle(
-                    location=point,
-                    radius=50000,  # 50km radius for each point
-                    color=team_info['color'],
-                    fill=True,
-                    fill_color=team_info['color'],
-                    fill_opacity=0.5,
-                    weight=0  # No border for the circles
-                ).add_to(m)
+            # Check if the center of the polygon is in the US
+            center = (lat + grid_size/2, lon + grid_size/2)
+            if point_in_us(center):
+                grid_polygons.append(polygon)
+    
+    # For each grid polygon, find the nearest team and color it
+    for polygon in grid_polygons:
+        # Find the center of the polygon
+        center_lat = (polygon[0][0] + polygon[2][0]) / 2
+        center_lon = (polygon[0][1] + polygon[2][1]) / 2
+        center = (center_lat, center_lon)
+        
+        # Find nearest team
+        nearest_team = None
+        min_distance = float('inf')
+        for team, team_info in nfl_teams.items():
+            distance = geodesic(center, team_info['coords']).miles
+            if distance < min_distance:
+                min_distance = distance
+                nearest_team = team
+        
+        if nearest_team:
+            team_info = nfl_teams[nearest_team]
+            # Create a GeoJSON polygon with the team's color
+            folium.GeoJson(
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [polygon]
+                    },
+                    "properties": {
+                        "color": team_info['color']
+                    }
+                },
+                style_function=lambda x: {
+                    'fillColor': x['properties']['color'],
+                    'color': 'black',
+                    'weight': 0,
+                    'fillOpacity': 0.5
+                }
+            ).add_to(m)
+    
+    # Add state boundaries with bold lines
+    for feature in state_boundaries['features']:
+        folium.GeoJson(
+            feature,
+            style_function=lambda x: {
+                'fillColor': 'transparent',
+                'color': 'black',
+                'weight': 3,  # Bold state boundaries
+                'fillOpacity': 0
+            }
+        ).add_to(m)
     
     # Add team markers with logos
     for team, team_info in nfl_teams.items():
