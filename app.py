@@ -110,7 +110,7 @@ def create_state_map(nearest_teams=None, league="NFL"):
         dragging=False
     )
     
-    # Create a single polygon representing the entire US
+    # Precompute US boundary polygon
     us_polygon = []
     for feature in state_boundaries['features']:
         if feature['geometry']['type'] == 'Polygon':
@@ -119,8 +119,10 @@ def create_state_map(nearest_teams=None, league="NFL"):
             for polygon in feature['geometry']['coordinates']:
                 us_polygon.extend(polygon[0])
     
+    # Precompute team coordinates and colors
+    team_data = [(team, info['coords'], info['color']) for team, info in nfl_teams.items()]
+    
     def point_in_us(point):
-        # Simple point-in-polygon check
         x, y = point[1], point[0]  # lon, lat
         inside = False
         n = len(us_polygon)
@@ -138,61 +140,65 @@ def create_state_map(nearest_teams=None, league="NFL"):
         return inside
     
     def hex_to_rgb(hex_color):
-        # Convert hex color to RGB
         hex_color = hex_color.lstrip('#')
         return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
     
     def rgb_to_hex(rgb):
-        # Convert RGB to hex color
         return '#{:02x}{:02x}{:02x}'.format(*rgb)
     
     def mix_colors(colors):
-        # Mix multiple colors by averaging their RGB values
         if not colors:
-            return '#808080'  # Default gray if no colors
-        
+            return '#808080'
         rgb_colors = [hex_to_rgb(color) for color in colors]
         mixed_rgb = tuple(sum(c) // len(colors) for c in zip(*rgb_colors))
         return rgb_to_hex(mixed_rgb)
     
     # Generate random points and color them
-    num_points = 10000  # Number of random points to generate
-    for _ in range(num_points):
-        # Generate random point within US bounds
-        lat = random.uniform(25, 50)
-        lon = random.uniform(-125, -65)
-        point = (lat, lon)
+    num_points = 1000000
+    batch_size = 10000  # Process points in batches to manage memory
+    
+    for batch in range(0, num_points, batch_size):
+        points = []
+        colors = []
         
-        if point_in_us(point):
-            # Find all teams within a small distance threshold
-            teams_with_distances = []
-            for team, team_info in nfl_teams.items():
-                distance = geodesic(point, team_info['coords']).miles
-                teams_with_distances.append((team, distance))
+        # Generate a batch of points
+        for _ in range(min(batch_size, num_points - batch)):
+            while True:
+                lat = random.uniform(25, 50)
+                lon = random.uniform(-125, -65)
+                point = (lat, lon)
+                if point_in_us(point):
+                    points.append(point)
+                    break
+        
+        # Process the batch
+        for point in points:
+            # Find closest teams
+            min_distance = float('inf')
+            closest_teams = []
             
-            # Sort by distance
-            teams_with_distances.sort(key=lambda x: x[1])
-            
-            # Get the closest distance
-            min_distance = teams_with_distances[0][1]
-            
-            # Find all teams at the minimum distance (including ties)
-            closest_teams = [team for team, dist in teams_with_distances if abs(dist - min_distance) < 1.0]
+            for team, coords, color in team_data:
+                distance = geodesic(point, coords).miles
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_teams = [(team, color)]
+                elif abs(distance - min_distance) < 1.0:
+                    closest_teams.append((team, color))
             
             # Get colors of closest teams
-            team_colors = [nfl_teams[team]['color'] for team in closest_teams]
-            
-            # Mix colors if there are ties
+            team_colors = [color for _, color in closest_teams]
             point_color = mix_colors(team_colors)
-            
-            # Create a small circle at this point
+            colors.append(point_color)
+        
+        # Add points to map in batch
+        for point, color in zip(points, colors):
             folium.Circle(
                 location=point,
-                radius=1000,  # 1km radius
-                color=point_color,
+                radius=500,  # Smaller radius for more points
+                color=color,
                 fill=True,
-                fill_color=point_color,
-                fill_opacity=0.7,
+                fill_color=color,
+                fill_opacity=0.5,  # Lower opacity for better blending
                 weight=0
             ).add_to(m)
     
@@ -203,7 +209,7 @@ def create_state_map(nearest_teams=None, league="NFL"):
             style_function=lambda x: {
                 'fillColor': 'transparent',
                 'color': 'black',
-                'weight': 3,  # Bold state boundaries
+                'weight': 3,
                 'fillOpacity': 0
             }
         ).add_to(m)
