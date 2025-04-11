@@ -9,6 +9,11 @@ import requests
 from PIL import Image
 from io import BytesIO
 import base64
+import json
+
+# Load state boundary data
+with open('us-states.json', 'r') as f:
+    state_boundaries = json.load(f)
 
 # NFL team locations and colors
 nfl_teams = {
@@ -94,61 +99,47 @@ def find_nearest_team(user_location):
     
     return nearest_teams, min_distance
 
-def create_state_map(user_location, nearest_teams):
-    m = folium.Map(location=[39.8283, -98.5795], zoom_start=4, tiles='cartodbpositron')
+def create_state_map(nearest_teams, league):
+    # Create a map centered on the US
+    m = folium.Map(location=[39.8283, -98.5795], zoom_start=4)
     
     # Add state boundaries with team colors
-    for state, teams in state_teams.items():
-        color = '#808080'  # Default gray
-        if len(teams) == 1:
-            color = nfl_teams[teams[0]]['color']
-        
-        # Add state polygon with team color
-        folium.GeoJson(
-            data={
-                "type": "Feature",
-                "properties": {"color": color},
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]  # Simplified for demo
+    for feature in state_boundaries['features']:
+        state_name = feature['properties']['name']
+        if state_name in state_teams:
+            team = state_teams[state_name]
+            if team in nfl_teams:
+                team_info = nfl_teams[team]
+                # Style the state with team colors
+                style_function = lambda x: {
+                    'fillColor': team_info['color'],
+                    'color': 'black',
+                    'weight': 1,
+                    'fillOpacity': 0.5
                 }
-            },
-            style_function=lambda x: {
-                'fillColor': x['properties']['color'],
-                'color': 'black',
-                'weight': 1,
-                'fillOpacity': 0.7
-            }
-        ).add_to(m)
+                folium.GeoJson(
+                    feature,
+                    style_function=style_function,
+                    tooltip=f"{state_name} - {team}"
+                ).add_to(m)
     
-    # Add team logos for the nearest teams
+    # Add team markers with logos
     for team in nearest_teams:
-        team_data = nfl_teams[team]
-        logo_url = team_data['logo']
+        team_info = nfl_teams[team]
+        # Create custom icon with team logo
+        logo_url = team_info['logo']
         response = requests.get(logo_url)
         img = Image.open(BytesIO(response.content))
+        img = img.resize((30, 30))
+        img.save('temp_logo.png')
+        icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
         
-        # Convert image to base64
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        
-        # Create HTML for the image
-        html = f'<img src="data:image/png;base64,{img_str}" style="width:50px;height:50px;">'
-        
-        # Add logo to map using custom HTML
+        # Add marker with custom icon
         folium.Marker(
-            location=team_data['coords'],
-            popup=folium.Popup(html, max_width=100),
-            icon=folium.Icon(color='blue', icon='info-sign')
+            location=team_info['coords'],
+            popup=team,
+            icon=icon
         ).add_to(m)
-    
-    # Add user location marker
-    folium.Marker(
-        location=user_location,
-        popup="Your Location",
-        icon=folium.Icon(color='red', icon='info-sign')
-    ).add_to(m)
     
     return m
 
@@ -170,7 +161,7 @@ if address:
             st.success(f"The nearest NFL team is the {nearest_teams[0]}, approximately {distance:.1f} miles away.")
         
         # Create and display map
-        m = create_state_map(user_location, nearest_teams)
+        m = create_state_map(nearest_teams, league)
         folium_static(m)
     else:
         st.error("Could not find the address. Please try a different address.") 
