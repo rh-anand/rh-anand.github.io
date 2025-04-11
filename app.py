@@ -99,7 +99,7 @@ def find_nearest_team(user_location):
     
     return nearest_teams, min_distance
 
-def create_state_map(nearest_teams, league):
+def create_state_map(nearest_teams=None, league="NFL"):
     # Create a map centered on the US
     m = folium.Map(location=[39.8283, -98.5795], zoom_start=4)
     
@@ -124,8 +124,7 @@ def create_state_map(nearest_teams, league):
                 ).add_to(m)
     
     # Add team markers with logos
-    for team in nearest_teams:
-        team_info = nfl_teams[team]
+    for team, team_info in nfl_teams.items():
         # Create custom icon with team logo
         logo_url = team_info['logo']
         response = requests.get(logo_url)
@@ -149,6 +148,10 @@ st.write("Find your nearest NFL team!")
 # League selection dropdown
 league = st.selectbox("Major League:", ["NFL"])
 
+# Display the default map
+m = create_state_map()
+folium_static(m)
+
 address = st.text_input("Address:", placeholder="Enter an address (e.g., 9510 Grove Hill Drive, Charlotte, NC or just Charlotte)")
 
 if address:
@@ -160,8 +163,13 @@ if address:
         else:
             st.success(f"The nearest NFL team is the {nearest_teams[0]}, approximately {distance:.1f} miles away.")
         
-        # Create and display map
+        # Create and display map with user location
         m = create_state_map(nearest_teams, league)
+        folium.Marker(
+            location=user_location,
+            popup="Your Location",
+            icon=folium.Icon(color='red', icon='info-sign')
+        ).add_to(m)
         folium_static(m)
     else:
         st.error("Could not find the address. Please try a different address.") 
