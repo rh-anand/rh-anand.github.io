@@ -153,54 +153,42 @@ def create_state_map(nearest_teams=None, league="NFL"):
         mixed_rgb = tuple(sum(c) // len(colors) for c in zip(*rgb_colors))
         return rgb_to_hex(mixed_rgb)
     
-    # Generate random points and color them
-    num_points = 1000000
-    batch_size = 10000  # Process points in batches to manage memory
-    
-    for batch in range(0, num_points, batch_size):
-        points = []
-        colors = []
+    # Generate 10 random points and color them
+    num_points = 10
+    for _ in range(num_points):
+        while True:
+            lat = random.uniform(25, 50)
+            lon = random.uniform(-125, -65)
+            point = (lat, lon)
+            if point_in_us(point):
+                break
         
-        # Generate a batch of points
-        for _ in range(min(batch_size, num_points - batch)):
-            while True:
-                lat = random.uniform(25, 50)
-                lon = random.uniform(-125, -65)
-                point = (lat, lon)
-                if point_in_us(point):
-                    points.append(point)
-                    break
+        # Find closest teams
+        min_distance = float('inf')
+        closest_teams = []
         
-        # Process the batch
-        for point in points:
-            # Find closest teams
-            min_distance = float('inf')
-            closest_teams = []
-            
-            for team, coords, color in team_data:
-                distance = geodesic(point, coords).miles
-                if distance < min_distance:
-                    min_distance = distance
-                    closest_teams = [(team, color)]
-                elif abs(distance - min_distance) < 1.0:
-                    closest_teams.append((team, color))
-            
-            # Get colors of closest teams
-            team_colors = [color for _, color in closest_teams]
-            point_color = mix_colors(team_colors)
-            colors.append(point_color)
+        for team, coords, color in team_data:
+            distance = geodesic(point, coords).miles
+            if distance < min_distance:
+                min_distance = distance
+                closest_teams = [(team, color)]
+            elif abs(distance - min_distance) < 1.0:
+                closest_teams.append((team, color))
         
-        # Add points to map in batch
-        for point, color in zip(points, colors):
-            folium.Circle(
-                location=point,
-                radius=500,  # Smaller radius for more points
-                color=color,
-                fill=True,
-                fill_color=color,
-                fill_opacity=0.5,  # Lower opacity for better blending
-                weight=0
-            ).add_to(m)
+        # Get colors of closest teams
+        team_colors = [color for _, color in closest_teams]
+        point_color = mix_colors(team_colors)
+        
+        # Create a circle at this point
+        folium.Circle(
+            location=point,
+            radius=5000,  # 5km radius for better visibility
+            color=point_color,
+            fill=True,
+            fill_color=point_color,
+            fill_opacity=0.7,
+            weight=0
+        ).add_to(m)
     
     # Add state boundaries with bold lines
     for feature in state_boundaries['features']:
