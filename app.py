@@ -112,8 +112,10 @@ def create_state_map(nearest_teams=None, league="NFL"):
     # Add state boundaries with team colors
     for feature in state_boundaries['features']:
         state_name = feature['properties']['name']
-        if state_name in state_teams:
-            teams = state_teams[state_name]
+        # Convert state name to state code for lookup
+        state_code = state_name_to_code.get(state_name)
+        if state_code and state_code in state_teams:
+            teams = state_teams[state_code]
             if teams:  # If state has teams
                 # Use the first team's color for the state
                 team = teams[0]
@@ -124,7 +126,7 @@ def create_state_map(nearest_teams=None, league="NFL"):
                         'fillColor': team_info['color'],
                         'color': 'black',
                         'weight': 1,
-                        'fillOpacity': 0.5
+                        'fillOpacity': 0.7  # Increased opacity for better visibility
                     }
                     folium.GeoJson(
                         feature,
@@ -180,6 +182,61 @@ def create_state_map(nearest_teams=None, league="NFL"):
             ).add_to(m)
     
     return m
+
+# Add state name to code mapping
+state_name_to_code = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+    'District of Columbia': 'DC'
+}
 
 st.title("Big 4 Map - NFL Teams")
 st.write("Find your nearest NFL team!")
