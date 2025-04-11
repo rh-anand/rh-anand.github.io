@@ -8,6 +8,7 @@ from streamlit_folium import folium_static
 import requests
 from PIL import Image
 from io import BytesIO
+import base64
 
 # NFL team locations and colors
 nfl_teams = {
@@ -127,12 +128,19 @@ def create_state_map(user_location, nearest_teams):
         response = requests.get(logo_url)
         img = Image.open(BytesIO(response.content))
         
-        # Add logo to map
-        folium.raster_layers.ImageOverlay(
-            image=img,
-            bounds=[[team_data['coords'][0]-0.5, team_data['coords'][1]-0.5],
-                   [team_data['coords'][0]+0.5, team_data['coords'][1]+0.5]],
-            opacity=0.8
+        # Convert image to base64
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        # Create HTML for the image
+        html = f'<img src="data:image/png;base64,{img_str}" style="width:50px;height:50px;">'
+        
+        # Add logo to map using custom HTML
+        folium.Marker(
+            location=team_data['coords'],
+            popup=folium.Popup(html, max_width=100),
+            icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(m)
     
     # Add user location marker
