@@ -109,77 +109,62 @@ def create_state_map(nearest_teams=None, league="NFL"):
         dragging=False
     )
     
-    # Add state boundaries with team colors
+    # First, add state boundaries with bold lines
     for feature in state_boundaries['features']:
-        state_name = feature['properties']['name']
-        # Convert state name to state code for lookup
-        state_code = state_name_to_code.get(state_name)
-        if state_code and state_code in state_teams:
-            teams = state_teams[state_code]
-            if teams:  # If state has teams
-                # Use the first team's color for the state
-                team = teams[0]
-                if team in nfl_teams:
-                    team_info = nfl_teams[team]
-                    # Style the state with team colors
-                    style_function = lambda x: {
-                        'fillColor': team_info['color'],
-                        'color': 'black',
-                        'weight': 1,
-                        'fillOpacity': 0.7  # Increased opacity for better visibility
-                    }
-                    folium.GeoJson(
-                        feature,
-                        style_function=style_function,
-                        tooltip=f"{state_name} - {', '.join(teams)}"
-                    ).add_to(m)
+        folium.GeoJson(
+            feature,
+            style_function=lambda x: {
+                'fillColor': 'transparent',
+                'color': 'black',
+                'weight': 3,  # Bold state boundaries
+                'fillOpacity': 0
+            }
+        ).add_to(m)
     
-    # Group teams by their coordinates to handle overlapping logos
-    team_locations = {}
-    for team, team_info in nfl_teams.items():
-        coords = tuple(team_info['coords'])
-        if coords not in team_locations:
-            team_locations[coords] = []
-        team_locations[coords].append(team)
+    # Create a grid of points across the US
+    grid_points = []
+    for lat in range(25, 50, 1):  # Approximate US latitude range
+        for lon in range(-125, -65, 1):  # Approximate US longitude range
+            grid_points.append((lat, lon))
     
-    # Add team markers with logos, adjusting position for overlapping teams
-    for coords, teams in team_locations.items():
-        if len(teams) > 1:
-            # For multiple teams in same location, spread them out
-            for i, team in enumerate(teams):
-                # Calculate offset based on team position in list
-                offset = (i - (len(teams)-1)/2) * 0.1  # 0.1 degree offset per team
-                adjusted_coords = (coords[0] + offset, coords[1] + offset)
-                
-                team_info = nfl_teams[team]
-                logo_url = team_info['logo']
-                response = requests.get(logo_url)
-                img = Image.open(BytesIO(response.content))
-                img = img.resize((30, 30))
-                img.save('temp_logo.png')
-                icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
-                
-                folium.Marker(
-                    location=adjusted_coords,
-                    popup=team,
-                    icon=icon
-                ).add_to(m)
-        else:
-            # Single team at location
-            team = teams[0]
-            team_info = nfl_teams[team]
-            logo_url = team_info['logo']
-            response = requests.get(logo_url)
-            img = Image.open(BytesIO(response.content))
-            img = img.resize((30, 30))
-            img.save('temp_logo.png')
-            icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
-            
-            folium.Marker(
-                location=coords,
-                popup=team,
-                icon=icon
+    # For each grid point, find the nearest team
+    for point in grid_points:
+        nearest_team = None
+        min_distance = float('inf')
+        
+        for team, team_info in nfl_teams.items():
+            distance = geodesic(point, team_info['coords']).miles
+            if distance < min_distance:
+                min_distance = distance
+                nearest_team = team
+        
+        if nearest_team:
+            team_info = nfl_teams[nearest_team]
+            # Create a small circle at this point with the team's color
+            folium.Circle(
+                location=point,
+                radius=50000,  # 50km radius for each point
+                color=team_info['color'],
+                fill=True,
+                fill_color=team_info['color'],
+                fill_opacity=0.5,
+                weight=0  # No border for the circles
             ).add_to(m)
+    
+    # Add team markers with logos
+    for team, team_info in nfl_teams.items():
+        logo_url = team_info['logo']
+        response = requests.get(logo_url)
+        img = Image.open(BytesIO(response.content))
+        img = img.resize((30, 30))
+        img.save('temp_logo.png')
+        icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
+        
+        folium.Marker(
+            location=team_info['coords'],
+            popup=team,
+            icon=icon
+        ).add_to(m)
     
     return m
 
