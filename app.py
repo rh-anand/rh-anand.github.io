@@ -175,24 +175,14 @@ def create_state_map(nearest_teams=None, league="NFL"):
         
         if nearest_team:
             team_info = nfl_teams[nearest_team]
-            # Create a GeoJSON polygon with the team's color
-            folium.GeoJson(
-                {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [polygon]
-                    },
-                    "properties": {
-                        "color": team_info['color']
-                    }
-                },
-                style_function=lambda x: {
-                    'fillColor': x['properties']['color'],
-                    'color': 'black',
-                    'weight': 0,
-                    'fillOpacity': 0.5
-                }
+            # Create a colored polygon
+            folium.Polygon(
+                locations=polygon,
+                color=team_info['color'],
+                fill=True,
+                fill_color=team_info['color'],
+                fill_opacity=0.7,
+                weight=0
             ).add_to(m)
     
     # Add state boundaries with bold lines
