@@ -100,45 +100,84 @@ def find_nearest_team(user_location):
     return nearest_teams, min_distance
 
 def create_state_map(nearest_teams=None, league="NFL"):
-    # Create a map centered on the US
-    m = folium.Map(location=[39.8283, -98.5795], zoom_start=4)
+    # Create a map centered on the US with zoom controls disabled
+    m = folium.Map(
+        location=[39.8283, -98.5795], 
+        zoom_start=4,
+        zoom_control=False,
+        scrollWheelZoom=False,
+        dragging=False
+    )
     
     # Add state boundaries with team colors
     for feature in state_boundaries['features']:
         state_name = feature['properties']['name']
         if state_name in state_teams:
-            team = state_teams[state_name]
-            if team in nfl_teams:
-                team_info = nfl_teams[team]
-                # Style the state with team colors
-                style_function = lambda x: {
-                    'fillColor': team_info['color'],
-                    'color': 'black',
-                    'weight': 1,
-                    'fillOpacity': 0.5
-                }
-                folium.GeoJson(
-                    feature,
-                    style_function=style_function,
-                    tooltip=f"{state_name} - {team}"
-                ).add_to(m)
+            teams = state_teams[state_name]
+            if teams:  # If state has teams
+                # Use the first team's color for the state
+                team = teams[0]
+                if team in nfl_teams:
+                    team_info = nfl_teams[team]
+                    # Style the state with team colors
+                    style_function = lambda x: {
+                        'fillColor': team_info['color'],
+                        'color': 'black',
+                        'weight': 1,
+                        'fillOpacity': 0.5
+                    }
+                    folium.GeoJson(
+                        feature,
+                        style_function=style_function,
+                        tooltip=f"{state_name} - {', '.join(teams)}"
+                    ).add_to(m)
     
-    # Add team markers with logos
+    # Group teams by their coordinates to handle overlapping logos
+    team_locations = {}
     for team, team_info in nfl_teams.items():
-        # Create custom icon with team logo
-        logo_url = team_info['logo']
-        response = requests.get(logo_url)
-        img = Image.open(BytesIO(response.content))
-        img = img.resize((30, 30))
-        img.save('temp_logo.png')
-        icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
-        
-        # Add marker with custom icon
-        folium.Marker(
-            location=team_info['coords'],
-            popup=team,
-            icon=icon
-        ).add_to(m)
+        coords = tuple(team_info['coords'])
+        if coords not in team_locations:
+            team_locations[coords] = []
+        team_locations[coords].append(team)
+    
+    # Add team markers with logos, adjusting position for overlapping teams
+    for coords, teams in team_locations.items():
+        if len(teams) > 1:
+            # For multiple teams in same location, spread them out
+            for i, team in enumerate(teams):
+                # Calculate offset based on team position in list
+                offset = (i - (len(teams)-1)/2) * 0.1  # 0.1 degree offset per team
+                adjusted_coords = (coords[0] + offset, coords[1] + offset)
+                
+                team_info = nfl_teams[team]
+                logo_url = team_info['logo']
+                response = requests.get(logo_url)
+                img = Image.open(BytesIO(response.content))
+                img = img.resize((30, 30))
+                img.save('temp_logo.png')
+                icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
+                
+                folium.Marker(
+                    location=adjusted_coords,
+                    popup=team,
+                    icon=icon
+                ).add_to(m)
+        else:
+            # Single team at location
+            team = teams[0]
+            team_info = nfl_teams[team]
+            logo_url = team_info['logo']
+            response = requests.get(logo_url)
+            img = Image.open(BytesIO(response.content))
+            img = img.resize((30, 30))
+            img.save('temp_logo.png')
+            icon = folium.CustomIcon('temp_logo.png', icon_size=(30, 30))
+            
+            folium.Marker(
+                location=coords,
+                popup=team,
+                icon=icon
+            ).add_to(m)
     
     return m
 
