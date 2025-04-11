@@ -127,29 +127,57 @@ def create_state_map(nearest_teams=None, league="NFL"):
         for lon in range(-125, -65, 1):  # Approximate US longitude range
             grid_points.append((lat, lon))
     
+    # Create a single polygon representing the entire US
+    us_polygon = []
+    for feature in state_boundaries['features']:
+        if feature['geometry']['type'] == 'Polygon':
+            us_polygon.extend(feature['geometry']['coordinates'][0])
+        elif feature['geometry']['type'] == 'MultiPolygon':
+            for polygon in feature['geometry']['coordinates']:
+                us_polygon.extend(polygon[0])
+    
+    def point_in_us(point):
+        # Simple point-in-polygon check
+        x, y = point[1], point[0]  # lon, lat
+        inside = False
+        n = len(us_polygon)
+        p1x, p1y = us_polygon[0]
+        for i in range(1, n + 1):
+            p2x, p2y = us_polygon[i % n]
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+        return inside
+    
     # For each grid point, find the nearest team
     for point in grid_points:
-        nearest_team = None
-        min_distance = float('inf')
-        
-        for team, team_info in nfl_teams.items():
-            distance = geodesic(point, team_info['coords']).miles
-            if distance < min_distance:
-                min_distance = distance
-                nearest_team = team
-        
-        if nearest_team:
-            team_info = nfl_teams[nearest_team]
-            # Create a small circle at this point with the team's color
-            folium.Circle(
-                location=point,
-                radius=50000,  # 50km radius for each point
-                color=team_info['color'],
-                fill=True,
-                fill_color=team_info['color'],
-                fill_opacity=0.5,
-                weight=0  # No border for the circles
-            ).add_to(m)
+        if point_in_us(point):
+            nearest_team = None
+            min_distance = float('inf')
+            
+            for team, team_info in nfl_teams.items():
+                distance = geodesic(point, team_info['coords']).miles
+                if distance < min_distance:
+                    min_distance = distance
+                    nearest_team = team
+            
+            if nearest_team:
+                team_info = nfl_teams[nearest_team]
+                # Create a small circle at this point with the team's color
+                folium.Circle(
+                    location=point,
+                    radius=50000,  # 50km radius for each point
+                    color=team_info['color'],
+                    fill=True,
+                    fill_color=team_info['color'],
+                    fill_opacity=0.5,
+                    weight=0  # No border for the circles
+                ).add_to(m)
     
     # Add team markers with logos
     for team, team_info in nfl_teams.items():
