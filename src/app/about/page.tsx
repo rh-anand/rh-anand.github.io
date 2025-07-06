@@ -92,7 +92,7 @@ export default function AboutPage() {
                 <li>• Engineered data quality service to segregate data by validation status into passed/failed datasets</li>
                 <li>• Integrated metrics into the existing application architecture using FastAPI endpoints</li>
                 <li>• Implemented functionality using Snowpark to generate Snowflake-managed Iceberg tables from S3 data</li>
-                <li>• Engineering a low-latency data pipeline with Snowpipe Streaming's high-performance architecture</li>
+                <li>• Engineering a low-latency data pipeline with Snowpipe Streaming&apos;s high-performance architecture</li>
               </ul>
             </div>
 
@@ -165,7 +165,7 @@ export default function AboutPage() {
               <p className="text-purple-300 text-sm mb-4">Oct. 2024 - December 2024</p>
               <ul className="space-y-2 text-gray-300 text-sm">
                 <li>• Analyzed internal investigation findings (2011-2020) using statistical methods and ML techniques</li>
-                <li>• Developed a RAG LLM system using OpenAI's API to recommend objective punitive outcomes</li>
+                <li>• Developed a RAG LLM system using OpenAI&apos;s API to recommend objective punitive outcomes</li>
                 <li>• Visualized differences between AI-recommended disciplinary actions and actual outcomes</li>
                 <li>• Implemented advanced sentiment analysis to classify misconduct severity</li>
                 <li>• Selected as top project to present findings to data science faculty and client</li>
@@ -174,7 +174,7 @@ export default function AboutPage() {
 
             {/* Boston 311 Analysis */}
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-xl font-semibold text-white mb-2">Analyzing Boston's 311 Service Requests</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Analyzing Boston&apos;s 311 Service Requests</h3>
               <p className="text-purple-300 text-sm mb-4">Sep. 2023 - Dec. 2023</p>
               <ul className="space-y-2 text-gray-300 text-sm">
                 <li>• Developed and maintained a database of 2.7M+ Boston 311 service requests over 12 years</li>
@@ -275,7 +275,7 @@ export default function AboutPage() {
               <div className="space-y-2">
                 <div className="flex items-center text-gray-300">
                   <Award className="w-4 h-4 mr-2 text-purple-400" />
-                  Dean's List: 2022-2025
+                  Dean&apos;s List: 2022-2025
                 </div>
                 <div className="flex items-center text-gray-300">
                   <GraduationCap className="w-4 h-4 mr-2 text-purple-400" />

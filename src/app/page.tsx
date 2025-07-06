@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { ArrowDown, Mail, Github, Linkedin, Twitter } from 'lucide-react';
-import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 
 export default function Home() {
@@ -23,7 +22,7 @@ export default function Home() {
               Rohan Anand
             </h1>
             <p className="text-xl md:text-2xl text-purple-200 mb-8 max-w-2xl mx-auto">
-              Software Engineer & Creative Developer
+              Software Engineer &amp; Creative Developer
             </p>
             <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto">
               Building beautiful, functional, and user-centered digital experiences. 
@@ -60,8 +59,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-
 
       {/* Projects Section */}
       <section id="projects" className="py-20">
@@ -136,12 +133,12 @@ export default function Home() {
             className="max-w-4xl mx-auto text-center"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-16">
-              Let's Connect
+              Let&apos;s Connect
             </h2>
             
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-              I'm always interested in new opportunities and exciting projects. 
-              Feel free to reach out if you'd like to collaborate or just say hello!
+              I&apos;m always interested in new opportunities and exciting projects. 
+              Feel free to reach out if you&apos;d like to collaborate or just say hello!
             </p>
             
             <div className="flex justify-center space-x-8 mb-12">
