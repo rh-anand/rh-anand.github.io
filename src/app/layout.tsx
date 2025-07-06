@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+const geistSans = localFont({
+  src: "../../Geist/webfonts/Geist[wght].woff2",
   variable: "--font-geist-sans",
+  weight: "100 900",
 });
 
-const geistMono = Inter({
-  subsets: ["latin"],
+const geistMono = localFont({
+  src: "../../GeistMono/webfonts/GeistMono[wght].woff2",
   variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
