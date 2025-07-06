@@ -32,7 +32,7 @@ export default function Home() {
             
             <div className="flex justify-center space-x-6 mb-12">
               <motion.a
-                href="#about"
+                href="/about"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
@@ -61,65 +61,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-20 bg-white/5 backdrop-blur-sm">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-16">
-              About Me
-            </h2>
-            
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                  I'm a passionate software engineer with a love for creating elegant solutions to complex problems. 
-                  With expertise in modern web technologies, I specialize in building scalable applications that 
-                  deliver exceptional user experiences.
-                </p>
-                <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                  When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, 
-                  or sharing knowledge with the developer community. I believe in continuous learning and staying 
-                  up-to-date with the latest industry trends.
-                </p>
-                <p className="text-lg text-gray-300 leading-relaxed">
-                  I'm always excited to take on new challenges and collaborate with talented teams to build 
-                  something amazing together.
-                </p>
-              </div>
-              
-              <div className="space-y-6">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Skills</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {['TypeScript', 'React', 'Next.js', 'Node.js', 'Python', 'AWS', 'Docker', 'PostgreSQL'].map((skill) => (
-                      <span key={skill} className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">Interests</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {['Web Development', 'AI/ML', 'Open Source', 'UI/UX Design', 'Cloud Computing'].map((interest) => (
-                      <span key={interest} className="bg-purple-500/50 text-purple-200 px-3 py-1 rounded-full text-sm">
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+
 
       {/* Projects Section */}
       <section id="projects" className="py-20">
