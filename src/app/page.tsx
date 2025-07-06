@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowDown, Mail, Github, Linkedin, Twitter, ExternalLink, Calendar, Clock } from 'lucide-react';
+import { ArrowDown, Mail, Github, Linkedin, Twitter, ExternalLink } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 
 export default function Home() {
@@ -177,111 +177,6 @@ export default function Home() {
                   </a>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Blog Section */}
-      <section id="blog" className="py-24">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-light text-white mb-4">
-                Latest Thoughts
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
-                Insights, tutorials, and thoughts on technology, design, and development.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Building Scalable React Applications",
-                  excerpt: "Learn the best practices for creating maintainable and scalable React applications that grow with your business needs.",
-                  date: "2024-01-15",
-                  readTime: "8 min read",
-                  category: "Development",
-                  slug: "building-scalable-react-applications"
-                },
-                {
-                  title: "The Future of Web Development",
-                  excerpt: "Exploring emerging trends and technologies that are shaping the future of web development and user experience.",
-                  date: "2024-01-10",
-                  readTime: "12 min read",
-                  category: "Technology",
-                  slug: "future-of-web-development"
-                },
-                {
-                  title: "Design Systems in Practice",
-                  excerpt: "How to create and maintain effective design systems that improve consistency and developer productivity.",
-                  date: "2024-01-05",
-                  readTime: "10 min read",
-                  category: "Design",
-                  slug: "design-systems-in-practice"
-                }
-              ].map((post, index) => (
-                <motion.article
-                  key={post.slug}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -8 }}
-                  className="group bg-gray-800/30 backdrop-blur-sm rounded-xl p-8 hover:bg-gray-800/50 transition-all duration-500 border border-gray-700/30 hover:border-gray-600/50"
-                >
-                  <div className="mb-4">
-                    <span className="text-xs font-medium text-green-400 uppercase tracking-wider">
-                      {post.category}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-xl font-medium text-white mb-3 group-hover:text-green-400 transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
-                  
-                  <p className="text-gray-400 mb-6 leading-relaxed line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-6">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-                  
-                  <a 
-                    href={`/blog/${post.slug}`}
-                    className="inline-flex items-center space-x-2 text-green-400 hover:text-green-300 font-medium group/link"
-                  >
-                    <span>Read More</span>
-                    <ExternalLink className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                  </a>
-                </motion.article>
-              ))}
-            </div>
-            
-            <div className="text-center mt-12">
-              <motion.a
-                href="/blog"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-lg font-medium transition-all duration-300 hover:bg-gray-100"
-              >
-                <span>View All Posts</span>
-                <ExternalLink className="w-4 h-4" />
-              </motion.a>
             </div>
           </motion.div>
         </div>

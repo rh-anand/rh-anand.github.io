@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import Link from 'next/link';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,6 @@ const Navigation = () => {
   const navItems = [
     { name: 'Home', href: '#home' },
     { name: 'Projects', href: '#projects' },
-    { name: 'Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -71,6 +71,45 @@ const Navigation = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
               </motion.button>
             ))}
+            
+            {/* Blog Button */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Link href="/blog">
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-gray-400 hover:text-white transition-all duration-300 font-medium text-sm uppercase tracking-wider relative group"
+                >
+                  Blog
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                </motion.button>
+              </Link>
+            </motion.div>
+            
+            {/* Resume Button */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <a 
+                href="/Resume - Rohan Anand.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white text-black px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-100 text-sm uppercase tracking-wider"
+                >
+                  Resume
+                </motion.button>
+              </a>
+            </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -106,6 +145,44 @@ const Navigation = () => {
                   {item.name}
                 </motion.button>
               ))}
+              
+              {/* Mobile Blog Button */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Link href="/blog">
+                  <motion.button
+                    whileHover={{ x: 8 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="text-gray-300 hover:text-white transition-all duration-300 font-medium text-left py-2 border-b border-gray-800/50"
+                  >
+                    Blog
+                  </motion.button>
+                </Link>
+              </motion.div>
+              
+              {/* Mobile Resume Button */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <a 
+                  href="/Resume - Rohan Anand.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <motion.button
+                    whileHover={{ x: 8 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="text-gray-300 hover:text-white transition-all duration-300 font-medium text-left py-2"
+                  >
+                    Resume
+                  </motion.button>
+                </a>
+              </motion.div>
             </div>
           </motion.div>
         )}
